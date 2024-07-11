@@ -13,10 +13,14 @@ db = config['DataBase']['db']
 
 DSN = f"{driver}://{login}:{password}@localhost:{host}/{db}"
 
-engine = sqlalchemy.create_engine(DSN)
-create_tables(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
+def start():
+    engine = sqlalchemy.create_engine(DSN)
+    create_tables(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
+
+session = start()
 
 publisher_1 = Publisher(name='Уильям', surname='Шекспир')
 publisher_2 = Publisher(name='Александр Сергеевич', surname='Пушкин')
@@ -60,3 +64,6 @@ else:
     print('Пока книг этого автора нет в наличии')
 
 session.close()
+
+if __name__ == "__main__":
+    start()
