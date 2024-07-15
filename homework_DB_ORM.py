@@ -52,18 +52,31 @@ sale_7 = Sale(price='600', date_sale='2022-10-26', stock=stock_7, count='3')
 session.add_all([publisher_1, publisher_2, book_1, book_2, book_3, book_4, book_5, shop_1, shop_2, shop_3, shop_4, shop_5, stock_1, stock_2, stock_3, stock_4, stock_5, stock_6, stock_7, sale_1, sale_2, sale_3, sale_4, sale_5, sale_6, sale_7])
 session.commit()
 surnames = []
+p_id = []
 list_p = session.query(Publisher.surname)
+list_p_id = session.query(Publisher.id)
+for p1 in list_p_id:
+    p_id.append(p1)
+result_id = [str(item) for sub in p_id for item in sub]
 for p in list_p:
     surnames.append(', '.join(p))
-input_publisher = input('Введите фамилию автора: ')
+
+input_publisher = input('Введите фамилию автора или номер его id: ')
 if input_publisher in surnames:
     result = (session.query(Book).with_entities(Book.title, Shop.name, Sale.price, Sale.date_sale).join(Publisher, Publisher.id == Book.id_publisher).join(Stock, Stock.id_book == Book.id).join(Shop, Shop.id == Stock.id_shop).join(Sale, Sale.id_stock == Stock.id).filter(Publisher.surname == input_publisher).all())
+    for book_title, shop_name, price, date_ in result:
+        print(f'{book_title} | {shop_name} | {price} | {date_}')
+elif input_publisher in result_id:
+    result = (session.query(Book).with_entities(Book.title, Shop.name, Sale.price, Sale.date_sale).join(Publisher, Publisher.id == Book.id_publisher).join(Stock, Stock.id_book == Book.id).join(Shop, Shop.id == Stock.id_shop).join(Sale, Sale.id_stock == Stock.id).filter(Publisher.id == input_publisher).all())
     for book_title, shop_name, price, date_ in result:
         print(f'{book_title} | {shop_name} | {price} | {date_}')
 else:
     print('Пока книг этого автора нет в наличии')
 
+
 session.close()
 
 if __name__ == "__main__":
     start()
+
+
